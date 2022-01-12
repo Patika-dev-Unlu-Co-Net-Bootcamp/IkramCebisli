@@ -51,7 +51,6 @@ namespace ProjeApi.Controllers
         };
 
         [HttpGet]
-
         public List<Proje> proje()
         {
             return projeList;
@@ -65,12 +64,29 @@ namespace ProjeApi.Controllers
             return proje;
         }
 
+       /* [HttpGet]
+        public Proje QueryList([FromQuery] string title)
+        {
+            var proje = projeList.Where(x => x.ProjeTitle == title).SingleOrDefault();
+
+            return proje;
+        }*/
+
+
         /*
          * Proje Ekleme
          */
         [HttpPost]
         public IActionResult AddProje([FromBody] Proje projeAdd)
         {
+            //var projeTur = projeTurController.ProjeTuruVarmi(projeAdd.ProjeTurId);
+            var proje = projeList.SingleOrDefault(x => x.Id == projeAdd.Id);
+
+           /* if (projeTur.Id > 0)
+                return NotFound("Proje Türü Bulunamadı");*/
+            if(proje is not null)
+                return NotFound("Proje Var zaten");
+
             projeList.Add(projeAdd);
             return Ok("Ekleme Başarılı");
         }
@@ -79,7 +95,9 @@ namespace ProjeApi.Controllers
         public IActionResult updateProje(Proje updateProje, int id)
         {
             var proje = projeList.SingleOrDefault(x => x.Id == id);
-            
+
+            if (proje == null)
+                return NotFound("Proje Bulunamadı");
 
             proje.ProjeTitle = updateProje.ProjeTitle != default ? updateProje.ProjeTitle : proje.ProjeTitle;
             proje.ProjeTurId = updateProje.ProjeTurId != default ? updateProje.ProjeTurId : proje.ProjeTurId;
@@ -89,5 +107,28 @@ namespace ProjeApi.Controllers
 
         }
 
+        [HttpPatch("{id:int}")]
+        public IActionResult patchProje(int id, Proje patProje)
+        {
+            var proje = projeList.SingleOrDefault(x => x.Id == id);
+
+            if (proje == null)
+                return NotFound("Proje Bulunamadı");
+
+            proje.ProjeTitle = patProje.ProjeTitle != default ? patProje.ProjeTitle : proje.ProjeTitle;
+
+            return Ok();
+        }
+
+        [HttpDelete("id")]
+        public IActionResult deleteProje(int id)
+        {
+            var proje = projeList.SingleOrDefault(x => x.Id == id);
+
+            if (proje == null)
+                return NotFound("Proje Bulunamadı");
+            projeList.Remove(proje);
+            return Ok();
+        }
     }
 }

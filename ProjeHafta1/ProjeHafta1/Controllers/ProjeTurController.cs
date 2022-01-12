@@ -78,5 +78,35 @@ namespace ProjeApi.Controllers
 
             return Ok();
         }
+
+        [HttpPatch("{id:int}")]
+        public IActionResult patchProje(int id, ProjeTur projeTur)
+        {
+            var tur = projeTursList.SingleOrDefault(x => x.Id == id);
+
+            if (tur is null)
+                return BadRequest();
+
+            tur.TurAd = projeTur.TurAd != default ? projeTur.TurAd : tur.TurAd;
+
+            return Ok();
+        }
+
+        [HttpDelete("id")]
+         public IActionResult deleteProjeTur(int id)
+         {
+            var tur = projeTursList.SingleOrDefault(x => x.Id == id);
+            if (tur is null)
+                 return BadRequest();
+             projeTursList.Remove(tur);
+             return Ok();
+         }
+
+        /*public ProjeTur ProjeTuruVarmi(int id)
+        {
+            var tur = projeTursList.SingleOrDefault(x => x.Id == id);
+            return tur;
+        }*/
+
     }
 }
